@@ -12,7 +12,21 @@ let ws
 
 export const isBrowser = typeof window !== "undefined"
 
-const Home = () => {
+export async function getStaticProps(context) {
+  let wsURL = process.env.WEBSOCKET_URL
+
+  if (!wsURL) {
+    throw Error('no backend WebSocket URL specified')
+  }
+
+  return {
+    props: {
+      wsURL
+    },
+  }
+}
+
+const Home = (props) => {
   const [wsInstance, setWsInstance] = useState(null)
   const [wsConnected, setWsConnected] = useState(false)
   const [msgs, setMsgs] = useState([])
@@ -74,7 +88,7 @@ const Home = () => {
   // setup websocket connection
   useEffect(() => {
     if(isBrowser) { 
-      ws = new WebSocket('wss://wgqv74nka0.execute-api.eu-central-1.amazonaws.com/production')
+      ws = new WebSocket(props.wsURL)
       setWsInstance(ws)
       console.log(ws)
 
